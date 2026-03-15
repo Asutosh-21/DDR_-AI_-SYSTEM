@@ -25,16 +25,26 @@ def extract_pdf(pdf_path, doc_type):
         page_imgs = page.get_images(full=True)
 
         if is_thermal:
-            # Pick the single largest image on this page (the actual thermal photo)
+            # Use get_image_info() — returns only images actually rendered on this page.
+            # The thermal PDF embeds all 180 xrefs at document level (shared across all pages),
+            # so get_images() returns 180 per page. get_image_info() returns only the ~6
+            # actually placed on this page.
+            # Each page has 2 JPEGs: thermal heatmap (top, lower Y) + visible light (bottom).
+            # Pick the JPEG with the smallest bbox Y (topmost) = the thermal heatmap.
+            rendered = page.get_image_info(xrefs=True)
             best = None
-            best_area = 0
-            for img in page_imgs:
-                xref = img[0]
+            best_y = float('inf')
+            for item in rendered:
+                xref = item.get("xref", 0)
+                if not xref:
+                    continue
                 try:
                     base_image = doc.extract_image(xref)
+                    ext = base_image.get("ext", "").lower()
                     w, h = base_image.get("width", 0), base_image.get("height", 0)
-                    if w * h > best_area and w > 200 and h > 200:
-                        best_area = w * h
+                    bbox_y = item.get("bbox", (0, float('inf')))[1]
+                    if ext in ("jpeg", "jpg") and w > 200 and h > 200 and bbox_y < best_y:
+                        best_y = bbox_y
                         best = (xref, base_image, w, h)
                 except Exception:
                     continue
