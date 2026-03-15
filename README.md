@@ -137,25 +137,6 @@ venv\Scripts\activate        # Windows
 pip install -r requirements.txt
 ```
 
-### 4. Set Up API Key
-
-Create a `.env` file in the project root:
-
-```
-GEMINI_API_KEY=your_gemini_api_key_here
-```
-
-Get a free API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
-
-### 5. Add Input Documents
-
-Place your PDF files in the `Data Input/` folder:
-
-```
-Data Input/
-├── Sample Report.pdf       ← your inspection report
-└── Thermal Images.pdf      ← your thermal imaging report
-```
 
 
 
@@ -190,4 +171,4 @@ Data Input/
 
 ## License
 
-MIT License — free to use and modify.
+MIT License 
