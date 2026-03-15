@@ -1,4 +1,4 @@
-# DDR AI System — Detailed Diagnostic Report Generator
+# DDR AI System — Detailed Diagnostic Report Generator Assignment Project
 
 An AI-powered pipeline that reads raw building inspection documents and thermal imaging reports, then generates a structured, client-ready **Detailed Diagnostic Report (DDR)** — complete with inline images, severity assessment, and recommended actions.
 
@@ -157,27 +157,7 @@ Data Input/
 └── Thermal Images.pdf      ← your thermal imaging report
 ```
 
----
 
-## Running the Project
-
-### Option A — Web UI (Recommended for demo)
-
-```bash
-venv\Scripts\streamlit.exe run app.py
-```
-
-Opens at `http://localhost:8501` — upload PDFs, click Generate, view and download the DDR.
-
-### Option B — Command Line
-
-```bash
-venv\Scripts\python.exe main.py
-```
-
-Runs all 4 pipeline stages and saves the report to `outputs/DDR_Report.docx`.
-
----
 
 ## Web UI Overview
 
@@ -195,17 +175,7 @@ Runs all 4 pipeline stages and saves the report to `outputs/DDR_Report.docx`.
 
 ---
 
-## Key Design Decisions
 
-| Decision | Reason |
-|---|---|
-| Gemini 2.5 Flash | Free tier, large context window, fast structured JSON output |
-| Text compression before LLM | Free tier has token limits — strips photo-only appendix pages, summarises thermal readings to one line each |
-| Separate thermal image extraction | Thermal PDF reuses same xref across all 30 pages — must extract best image per page, not deduplicate by xref |
-| Image size filter (>200px) | Thermal PDFs contain 180 embedded icons per page — filter keeps only real photos |
-| Retry with exponential backoff | Handles Gemini 429 rate limit errors gracefully |
-
----
 
 ## Limitations
 
@@ -216,38 +186,7 @@ Runs all 4 pipeline stages and saves the report to `outputs/DDR_Report.docx`.
 
 ---
 
-## How to Generalise to Other Reports
 
-The system works on any similar inspection report without code changes:
-
-1. Place new PDFs in `Data Input/`
-2. Run `main.py` or use the web UI
-3. Gemini reads whatever structure is present and maps it to the DDR schema
-
-For different document structures, only `image_mapper.py` page ranges may need updating to match the new PDF layout.
-
----
-
-## Environment Variables
-
-| Variable | Description |
-|---|---|
-| `GEMINI_API_KEY` | Your Google Gemini API key |
-
----
-
-## .gitignore Recommendations
-
-```
-.env
-extracted/
-outputs/
-venv/
-__pycache__/
-*.pyc
-```
-
----
 
 ## License
 
